@@ -70,28 +70,86 @@ task.wait(1.5)
 gui:Destroy()
 
 ------------------------------------------------------------
--- 🎛 MAIN UI BUTTON
+-- 🎛 MAIN UI BUTTON (7 COLOR RGB BORDER)
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+
+local player = Players.LocalPlayer
+
+-- Anti duplicate
+if player.PlayerGui:FindFirstChild("BellHub_Button") then
+	player.PlayerGui.BellHub_Button:Destroy()
+end
+
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Parent = game.CoreGui
-ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ScreenGui.Name = "BellHub_Button"
+ScreenGui.Parent = player:WaitForChild("PlayerGui")
+ScreenGui.ResetOnSpawn = false
 
-local ImageButton = Instance.new("ImageButton")
-ImageButton.Parent = ScreenGui
-ImageButton.BackgroundColor3 = Color3.fromRGB(0,0,0)
-ImageButton.BorderSizePixel = 0
-ImageButton.Position = UDim2.new(0.1,0,0.15,0)
-ImageButton.Size = UDim2.new(0,40,0,40)
-ImageButton.Draggable = true
-ImageButton.Image = "http://www.roblox.com/asset/?id=133832126046587"
+local Button = Instance.new("ImageButton")
+Button.Parent = ScreenGui
+Button.Size = UDim2.fromOffset(55,55)
+Button.Position = UDim2.new(0.1,0,0.2,0)
+Button.BackgroundColor3 = Color3.fromRGB(20,20,20)
+Button.Image = "rbxassetid://133832126046587"
+Button.AutoButtonColor = false
 
-local UICorner = Instance.new("UICorner")
-UICorner.Parent = ImageButton
-UICorner.CornerRadius = UDim.new(1,10)
+local Corner = Instance.new("UICorner")
+Corner.CornerRadius = UDim.new(1,0)
+Corner.Parent = Button
 
-ImageButton.MouseButton1Down:Connect(function()
-    game:GetService("VirtualInputManager"):SendKeyEvent(true,Enum.KeyCode.End,false,game)
+-- 🌈 7 COLOR STROKE
+local Stroke = Instance.new("UIStroke")
+Stroke.Parent = Button
+Stroke.Thickness = 3
+
+local hue = 0
+
+RunService.RenderStepped:Connect(function(dt)
+	hue += dt * 0.5
+	if hue > 1 then hue = 0 end
+	Stroke.Color = Color3.fromHSV(hue,1,1)
 end)
 
+-- Toggle Fluent
+Button.MouseButton1Click:Connect(function()
+	if Window then
+		Window:Toggle()
+	end
+end)
+
+-- Drag custom
+local dragging = false
+local dragStart
+local startPos
+
+Button.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true
+		dragStart = input.Position
+		startPos = Button.Position
+	end
+end)
+
+Button.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = false
+	end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+	if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+		local delta = input.Position - dragStart
+		Button.Position = UDim2.new(
+			startPos.X.Scale,
+			startPos.X.Offset + delta.X,
+			startPos.Y.Scale,
+			startPos.Y.Offset + delta.Y
+		)
+	end
+end)
 ------------------------------------------------------------
 -- 📦 LOAD FLUENT
 repeat task.wait() until game:IsLoaded()
@@ -107,11 +165,21 @@ local Window = Fluent:CreateWindow({
     MinimizeKey=Enum.KeyCode.End
 })
 
+-- 🔠 FORCE ALL TEXT BOLD (trừ intro)
+task.delay(1, function()
+	for _,v in pairs(game.CoreGui:GetDescendants()) do
+		if v:IsA("TextLabel") or v:IsA("TextButton") then
+			v.Font = Enum.Font.GothamBold
+		end
+	end
+end)
+
 -- Tabs
 local Tabs = {
     Main0=Window:AddTab({Title="Thông Tin"}),
     Main1=Window:AddTab({Title="Blox Fruits"}),
     Main2=Window:AddTab({Title="GARDEN HORIZONS"}),
+    Main3=Window:AddTab({Title="FIX LAG"}),
 }
 
 -- Tab 0: Thông Tin
@@ -135,12 +203,6 @@ Tabs.Main1:AddButton({
     Title="Gravity Hub",
     Callback=function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/Dev-GravityHub/BloxFruit/refs/heads/main/Main.lua"))()
-    end
-})
-Tabs.Main1:AddButton({
-    Title="Fix Lag",
-    Callback=function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/TurboLite/Script/main/FixLag.lua"))()
     end
 })
 Tabs.Main1:AddButton({
@@ -222,3 +284,10 @@ Tabs.Main2:AddButton({
        loadstring(game:HttpGet("https://raw.githubusercontent.com/gumanba/Scripts/main/GardenHorizons"))()
     end
 })
+Tabs.Main3:AddButton({
+    Title="Fix Lag",
+    Callback=function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/TurboLite/Script/main/FixLag.lua"))()
+    end
+})
+msg.Font = Enum.Font.GothamBlack
