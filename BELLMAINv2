@@ -206,12 +206,6 @@ Tabs.Main1:AddButton({
     end
 })
 Tabs.Main1:AddButton({
-    Title="Min Hub",
-    Callback=function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/LuaCrack/Min/refs/heads/main/MinXt2Eng"))()
-    end
-})
-Tabs.Main1:AddButton({
     Title="Speed Hub X",
     Callback=function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/AhmadV99/Speed-Hub-X/main/Speed%20Hub%20X.lua", true))()
@@ -236,15 +230,21 @@ Tabs.Main1:AddButton({
     end
 })
 Tabs.Main1:AddButton({
-    Title="Volcano Hub V3",
+    Title="LONG HIHI",
     Callback=function()
-        loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/indexeduu/BF-NewVer/refs/heads/main/V3New.lua"))()
+        loadstring(game:HttpGet(" https://raw.githubusercontent.com/longhihilonghihi-hub/Devs-LongHiHiV2/refs/heads/main/MainV2.txt"))()
     end
 })
 Tabs.Main1:AddButton({
     Title="HOHO Hub",
     Callback=function()
         loadstring(game:HttpGet('https://raw.githubusercontent.com/acsu123/HOHO_H/main/Loading_UI'))()
+    end
+})
+Tabs.Main1:AddButton({
+    Title="BANANA Hub",
+    Callback=function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/obiyeueim/vthangsitink/main/BananaHub.lua"))()
     end
 })
 -- Tab 2: GARDEN HORIZONS
