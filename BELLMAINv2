@@ -1,38 +1,36 @@
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
 local player = Players.LocalPlayer
 
--- 🌌 INTRO GUI
+-- 🌌 1. INTRO GUI (BELL HUB)
 local gui = Instance.new("ScreenGui")
-gui.Name = "BELL HUB"
+gui.Name = "BELL HUB INTRO"
 gui.IgnoreGuiInset = true
 gui.ResetOnSpawn = false
 gui.Parent = player:WaitForChild("PlayerGui")
 
--- Nền tối nhẹ
 local bg = Instance.new("Frame")
 bg.Size = UDim2.new(1,0,1,0)
 bg.BackgroundColor3 = Color3.fromRGB(0,0,0)
 bg.BackgroundTransparency = 0.3
 bg.Parent = gui
 
--- Logo Image
 local logo = Instance.new("ImageLabel")
 logo.Parent = gui
 logo.AnchorPoint = Vector2.new(0.5,0.5)
 logo.Position = UDim2.new(0.5,0,0.5,0)
-logo.Size = UDim2.new(0,0,0,0) -- bắt đầu nhỏ rồi zoom
+logo.Size = UDim2.new(0,0,0,0)
 logo.BackgroundTransparency = 1
 logo.Image = "http://www.roblox.com/asset/?id=133832126046587"
 logo.ImageTransparency = 1
 
--- Hiện logo (zoom + fade in)
 TweenService:Create(logo, TweenInfo.new(1.5, Enum.EasingStyle.Elastic, Enum.EasingDirection.Out), {
     Size = UDim2.new(0,200,0,200),
     ImageTransparency = 0
 }):Play()
 
--- Xoay logo
 task.spawn(function()
     while logo.Parent do
         logo.Rotation = logo.Rotation + 0.5
@@ -40,7 +38,6 @@ task.spawn(function()
     end
 end)
 
--- Chữ bên dưới logo
 local msg = Instance.new("TextLabel")
 msg.Parent = gui
 msg.AnchorPoint = Vector2.new(0.5,0)
@@ -55,32 +52,12 @@ msg.TextStrokeTransparency = 0
 msg.TextStrokeColor3 = Color3.fromRGB(0,0,0)
 msg.TextTransparency = 1
 
--- Chữ fade in
 TweenService:Create(msg, TweenInfo.new(1.2), {TextTransparency=0}):Play()
 
--- Giữ intro 4s
-task.wait(4)
-
--- Fade out tất cả
-TweenService:Create(logo, TweenInfo.new(1.2), {ImageTransparency=1}):Play()
-TweenService:Create(msg, TweenInfo.new(1.2), {TextTransparency=1}):Play()
-TweenService:Create(bg, TweenInfo.new(1.2), {BackgroundTransparency=1}):Play()
-task.wait(1.5)
-
-gui:Destroy()
-
 ------------------------------------------------------------
--- 🎛 MAIN UI BUTTON (7 COLOR RGB BORDER)
-
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
-
-local player = Players.LocalPlayer
-
--- Anti duplicate
+-- 🎛 2. MAIN UI BUTTON (RGB Border)
 if player.PlayerGui:FindFirstChild("BellHub_Button") then
-	player.PlayerGui.BellHub_Button:Destroy()
+    player.PlayerGui.BellHub_Button:Destroy()
 end
 
 local ScreenGui = Instance.new("ScreenGui")
@@ -100,188 +77,166 @@ local Corner = Instance.new("UICorner")
 Corner.CornerRadius = UDim.new(1,0)
 Corner.Parent = Button
 
--- 🌈 7 COLOR STROKE
 local Stroke = Instance.new("UIStroke")
 Stroke.Parent = Button
 Stroke.Thickness = 3
 
 local hue = 0
+local rainbowSpeed = 0.5
+local rainbowEnabled = true
 
 RunService.RenderStepped:Connect(function(dt)
-	hue += dt * 0.5
-	if hue > 1 then hue = 0 end
-	Stroke.Color = Color3.fromHSV(hue,1,1)
+    if rainbowEnabled then
+        hue += dt * rainbowSpeed
+        if hue > 1 then hue = 0 end
+        Stroke.Color = Color3.fromHSV(hue,1,1)
+    end
 end)
 
--- Toggle Fluent
-Button.MouseButton1Click:Connect(function()
-	if Window then
-		Window:Toggle()
-	end
-end)
-
--- Drag custom
-local dragging = false
-local dragStart
-local startPos
-
+-- Dragging
+local dragging, dragStart, startPos
 Button.InputBegan:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 then
-		dragging = true
-		dragStart = input.Position
-		startPos = Button.Position
-	end
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = Button.Position
+    end
 end)
-
 Button.InputEnded:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 then
-		dragging = false
-	end
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false end
+end)
+UserInputService.InputChanged:Connect(function(input)
+    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+        local delta = input.Position - dragStart
+        Button.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
 end)
 
-UserInputService.InputChanged:Connect(function(input)
-	if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-		local delta = input.Position - dragStart
-		Button.Position = UDim2.new(
-			startPos.X.Scale,
-			startPos.X.Offset + delta.X,
-			startPos.Y.Scale,
-			startPos.Y.Offset + delta.Y
-		)
-	end
-end)
 ------------------------------------------------------------
--- 📦 LOAD FLUENT
+-- 📦 3. LOAD FLUENT & TABS
 repeat task.wait() until game:IsLoaded()
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 
 local Window = Fluent:CreateWindow({
-    Title="BELL HUB",
-    SubTitle="Tổng Hợp Script",
-    TabWidth=157,
-    Size=UDim2.fromOffset(450,300),
-    Acrylic=true,
-    Theme="Dark",
-    MinimizeKey=Enum.KeyCode.End
+    Title = "BELL HUB",
+    SubTitle = "Tổng Hợp Script",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(580, 460),
+    Acrylic = true,
+    Theme = "Dark",
+    MinimizeKey = Enum.KeyCode.End
 })
 
--- 🔠 FORCE ALL TEXT BOLD (trừ intro)
-task.delay(1, function()
-	for _,v in pairs(game.CoreGui:GetDescendants()) do
-		if v:IsA("TextLabel") or v:IsA("TextButton") then
-			v.Font = Enum.Font.GothamBold
-		end
-	end
+Button.MouseButton1Click:Connect(function()
+    Window:Toggle()
 end)
 
--- Tabs
 local Tabs = {
-    Main0=Window:AddTab({Title="Thông Tin"}),
-    Main1=Window:AddTab({Title="Blox Fruits"}),
-    Main2=Window:AddTab({Title="GARDEN HORIZONS"}),
-    Main3=Window:AddTab({Title="FIX LAG"}),
+    Main0 = Window:AddTab({ Title = "Thông Tin", Icon = "info" }),
+    Main1 = Window:AddTab({ Title = "Blox Fruits", Icon = "swords" }),
+    Main2 = Window:AddTab({ Title = "GARDEN HORIZONS", Icon = "leaf" }),
+    Main3 = Window:AddTab({ Title = "FIX LAG", Icon = "zap" }),
+    Settings = Window:AddTab({ Title = "CÀI ĐẶT UI", Icon = "settings" })
 }
 
 -- Tab 0: Thông Tin
 Tabs.Main0:AddButton({
-    Title="NÂUQ",
-    Description="KHI ẤN VÀO HÃY DÁN VÀO YOUTUBE CÓ ĐIỀU BẤT NGỜ :))",
-    Callback=function()
+    Title = "NÂUQ",
+    Description = "DÁN VÀO YOUTUBE ĐỂ XEM ĐIỀU BẤT NGỜ",
+    Callback = function()
         setclipboard("https://www.youtube.com/watch?v=XqHvpUNLjlM")
     end
 })
 
--- Tab 1: Blox Fruits
-Tabs.Main1:AddButton({
-    Title="QUANTUM HUB",
-    Callback=function()
-        local Settings={JoinTeam="Pirates",Translator=true}
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/flazhy/QuantumOnyx/refs/heads/main/QuantumOnyx.lua"))()
+-- Tab 1: Blox Fruits (Full)
+Tabs.Main1:AddButton({ Title = "QUANTUM HUB", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/flazhy/QuantumOnyx/refs/heads/main/QuantumOnyx.lua"))() end })
+Tabs.Main1:AddButton({ Title = "Gravity Hub", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Dev-GravityHub/BloxFruit/refs/heads/main/Main.lua"))() end })
+Tabs.Main1:AddButton({ Title = "Speed Hub X", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/AhmadV99/Speed-Hub-X/main/Speed%20Hub%20X.lua", true))() end })
+Tabs.Main1:AddButton({ Title = "OMG HUB", Callback = function() loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/20f318386e3fbf069ee3fa797cfc9f34.lua"))() end })
+Tabs.Main1:AddButton({ Title = "BlueX HUb", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Dev-BlueX/BlueX-Hub/refs/heads/main/Main.lua"))() end })
+Tabs.Main1:AddButton({ Title = "RONIX HUB", Callback = function() loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Radius-Hub-15-Games-61719"))() end })
+Tabs.Main1:AddButton({ Title = "HOHO Hub", Callback = function() loadstring(game:HttpGet('https://raw.githubusercontent.com/acsu123/HOHO_H/main/Loading_UI'))() end })
+Tabs.Main1:AddButton({ Title = "BANANA Hub", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/obiyeueim/vthangsitink/main/BananaHub.lua"))() end })
+
+-- Tab 2: GARDEN HORIZONS (Full)
+Tabs.Main2:AddButton({ Title = "??? HUB", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/LynX99-9/komtolmmek2/refs/heads/main/Garden%20Horizon"))() end })
+Tabs.Main2:AddButton({ Title = "Speed Hub X", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/AhmadV99/Speed-Hub-X/main/Speed%20Hub%20X.lua", true))() end })
+Tabs.Main2:AddButton({ Title = "??? HUB 2", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/meobeo8/a/a/a"))() end })
+Tabs.Main2:AddButton({ Title = "BLUE X", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Dev-BlueX/BlueX-Hub/refs/heads/main/Main.lua"))() end })
+Tabs.Main2:AddButton({ Title = "SOLIX HUB", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/meobeo8/a/a/a"))() end })
+Tabs.Main2:AddButton({ Title = "HACK GARDEN HORIZONS HUB", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/gumanba/Scripts/main/GardenHorizons"))() end })
+
+-- Tab 3: FIX LAG
+Tabs.Main3:AddButton({ Title = "Fix Lag", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/TurboLite/Script/main/FixLag.lua"))() end })
+
+------------------------------------------------------------
+-- ⚙️ 4. CHỨC NĂNG CHỈNH GIAO DIỆN (ĐÃ SỬA LỖI THEME)
+Tabs.Settings:AddDropdown("InterfaceTheme", {
+    Title = "Chủ đề (Theme)",
+    Values = {"Dark", "Light", "Aqua", "Amethyst"}, -- Các theme gốc ổn định nhất
+    Default = "Dark",
+    Callback = function(Value)
+        Fluent:SetTheme(Value)
     end
 })
-Tabs.Main1:AddButton({
-    Title="Gravity Hub",
-    Callback=function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Dev-GravityHub/BloxFruit/refs/heads/main/Main.lua"))()
+
+-- Tạo các màu đặc biệt bằng tay để đảm bảo nó CHẠY
+Tabs.Settings:AddSection("Theme Đặc Biệt (Sửa lỗi)")
+
+Tabs.Settings:AddButton({
+    Title = "Kích hoạt màu Rose (Hồng)",
+    Callback = function() 
+        Fluent:SetTheme("Rose") -- Thử gọi trực tiếp
+        -- Nếu thư viện không có sẵn, mình dùng fallback Amethyst
+        if Fluent.Theme ~= "Rose" then Fluent:SetTheme("Amethyst") end
     end
 })
-Tabs.Main1:AddButton({
-    Title="Speed Hub X",
-    Callback=function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/AhmadV99/Speed-Hub-X/main/Speed%20Hub%20X.lua", true))()
+
+Tabs.Settings:AddButton({
+    Title = "Kích hoạt màu Sunrise (Cam vàng)",
+    Callback = function() 
+        Fluent:SetTheme("Sunrise")
+        if Fluent.Theme ~= "Sunrise" then Fluent:SetTheme("Light") end
     end
 })
-Tabs.Main1:AddButton({
-    Title="OMG HUB",
-    Callback=function()
-        loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/20f318386e3fbf069ee3fa797cfc9f34.lua"))()
-    end
+
+Tabs.Settings:AddToggle("AcrylicToggle", {
+    Title = "Hiệu ứng mờ (Acrylic)",
+    Default = true,
+    Callback = function(Value) Window:SetAcrylic(Value) end
 })
-Tabs.Main1:AddButton({
-    Title="BlueX HUb",
-    Callback=function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Dev-BlueX/BlueX-Hub/refs/heads/main/Main.lua"))()
-    end
+
+Tabs.Settings:AddSection("Tùy chỉnh Nút Menu")
+
+Tabs.Settings:AddToggle("RGBBtn", {
+    Title = "Bật Viền RGB",
+    Default = true,
+    Callback = function(Value) rainbowEnabled = Value end
 })
-Tabs.Main1:AddButton({
-    Title="RONIX HUB",
-    Callback=function()
-        loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Radius-Hub-15-Games-61719"))()
-    end
+
+Tabs.Settings:AddSlider("RGBSpeed", {
+    Title = "Tốc độ đổi màu",
+    Default = 0.5,
+    Min = 0.1, Max = 3, Rounding = 1,
+    Callback = function(Value) rainbowSpeed = Value end
 })
-Tabs.Main1:AddButton({
-    Title="HOHO Hub",
-    Callback=function()
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/acsu123/HOHO_H/main/Loading_UI'))()
+
+------------------------------------------------------------
+-- 🕒 KẾT THÚC
+task.wait(4)
+TweenService:Create(logo, TweenInfo.new(1.2), {ImageTransparency=1}):Play()
+TweenService:Create(msg, TweenInfo.new(1.2), {TextTransparency=1}):Play()
+TweenService:Create(bg, TweenInfo.new(1.2), {BackgroundTransparency=1}):Play()
+task.wait(1.5)
+gui:Destroy()
+
+-- Ép font
+task.delay(1, function()
+    for _,v in pairs(game.CoreGui:GetDescendants()) do
+        if v:IsA("TextLabel") or v:IsA("TextButton") then
+            v.Font = Enum.Font.GothamBold
+        end
     end
-})
-Tabs.Main1:AddButton({
-    Title="BANANA Hub",
-    Callback=function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/obiyeueim/vthangsitink/main/BananaHub.lua"))()
-    end
-})
--- Tab 2: GARDEN HORIZONS
-Tabs.Main2:AddButton({
-    Title="??? HUB",
-    Callback=function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/LynX99-9/komtolmmek2/refs/heads/main/Garden%20Horizon"))()
-    end
-})
-Tabs.Main2:AddButton({
-    Title="Speed Hub X",
-    Callback=function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/AhmadV99/Speed-Hub-X/main/Speed%20Hub%20X.lua", true))()
-    end
-})
-Tabs.Main2:AddButton({
-    Title="??? HUB 2",
-    Callback=function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/meobeo8/a/a/a"))()
-    end
-})
-Tabs.Main2:AddButton({
-    Title="BLUE X",
-    Callback=function()
-loadstring(game:HttpGet("https://raw.githubusercontent.com/Dev-BlueX/BlueX-Hub/refs/heads/main/Main.lua"))()
-    end
-})
-Tabs.Main2:AddButton({
-    Title="SOLIX HUB",
-    Callback=function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/meobeo8/a/a/a"))()
-    end
-})
-Tabs.Main2:AddButton({
-    Title="HACK GARDEN HORIZONS HUB",
-    Callback=function()
-       loadstring(game:HttpGet("https://raw.githubusercontent.com/gumanba/Scripts/main/GardenHorizons"))()
-    end
-})
-Tabs.Main3:AddButton({
-    Title="Fix Lag",
-    Callback=function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/TurboLite/Script/main/FixLag.lua"))()
-    end
-})
-msg.Font = Enum.Font.GothamBlack
+end)
+
+Window:SelectTab(1)
