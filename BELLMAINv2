@@ -153,7 +153,7 @@ Tabs.Main1:AddButton({ Title = "HOHO Hub", Callback = function() loadstring(game
 Tabs.Main1:AddButton({ Title = "BANANA Hub", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/obiyeueim/vthangsitink/main/BananaHub.lua"))() end })
 Tabs.Main1:AddButton({
     Title = "KAITUN",
-    Description = "TỰ CUNG TỰ CẤP ẤN VÀO RỒI TỰ DÁN VÀO TỰ GET KEY",
+    Description = "DÁN VÔ GOOGLE CHROME",
     Callback = function() setclipboard("https://fnote.org/notes/WgFn2Z") end
 })
 -- --- TAB 2: GARDEN HORIZONS (Full 6 Script) ---
