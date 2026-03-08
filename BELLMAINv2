@@ -154,7 +154,7 @@ Tabs.Main1:AddButton({ Title = "BANANA Hub", Callback = function() loadstring(ga
 Tabs.Main1:AddButton({
     Title = "KAITUN",
     Description = "DÁN VÔ GOOGLE CHROME",
-    Callback = function() setclipboard("https://fnote.org/notes/WgFn2Z") end
+    Callback = function() setclipboard("https://pastefy.app/WEG1iXWO") end
 })
 -- --- TAB 2: GARDEN HORIZONS (Full 6 Script) ---
 Tabs.Main2:AddButton({ Title = "??? HUB ", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/LynX99-9/komtolmmek2/refs/heads/main/Garden%20Horizon"))() end })
