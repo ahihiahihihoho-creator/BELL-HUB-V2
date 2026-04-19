@@ -143,6 +143,7 @@ Tabs.Main0:AddButton({
 })
 
 -- --- TAB 1: BLOX FRUITS (Full 11 Script) ---
+Tabs.Main1:AddButton({ Title = "KAITUNA", Callback = function() loadstring(game:HttpGet("https://pastefy.app/WEG1iXWO/raw"))() end })
 Tabs.Main1:AddButton({ Title = "QUANTUM HUB", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/flazhy/QuantumOnyx/refs/heads/main/QuantumOnyx.lua"))() end })
 Tabs.Main1:AddButton({ Title = "Gravity Hub", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Dev-GravityHub/BloxFruit/refs/heads/main/Main.lua"))() end })
 Tabs.Main1:AddButton({ Title = "Speed Hub X", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/AhmadV99/Speed-Hub-X/main/Speed%20Hub%20X.lua", true))() end })
@@ -151,7 +152,6 @@ Tabs.Main1:AddButton({ Title = "BlueX HUb", Callback = function() loadstring(gam
 Tabs.Main1:AddButton({ Title = "RONIX HUB", Callback = function() loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Radius-Hub-15-Games-61719"))() end })
 Tabs.Main1:AddButton({ Title = "HOHO Hub", Callback = function() loadstring(game:HttpGet('https://raw.githubusercontent.com/acsu123/HOHO_H/main/Loading_UI'))() end })
 Tabs.Main1:AddButton({ Title = "BANANA Hub", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/obiyeueim/vthangsitink/main/BananaHub.lua"))() end })
-Tabs.Main1:AddButton({ Title = "KAITUN", Callback = function() loadstring(game:HttpGet("https://pastefy.app/WEG1iXWO/raw"))() end })
 -- --- TAB 2: GARDEN HORIZONS (Full 6 Script) ---
 Tabs.Main2:AddButton({ Title = "??? HUB ", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/LynX99-9/komtolmmek2/refs/heads/main/Garden%20Horizon"))() end })
 Tabs.Main2:AddButton({ Title = "Speed Hub X ", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/AhmadV99/Speed-Hub-X/main/Speed%20Hub%20X.lua", true))() end })
