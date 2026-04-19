@@ -132,6 +132,7 @@ local Tabs = {
     Main1 = Window:AddTab({ Title = "Blox Fruits", Icon = "swords" }),
     Main2 = Window:AddTab({ Title = "GARDEN HORIZONS", Icon = "leaf" }),
     Main3 = Window:AddTab({ Title = "FIX LAG", Icon = "zap" }),
+    Main4 = Window:AddTab({ Title = "FIX LAG", Icon = "leaf" }),
     Settings = Window:AddTab({ Title = "CÀI ĐẶT UI", Icon = "settings" })
 }
 
@@ -162,6 +163,9 @@ Tabs.Main2:AddButton({ Title = "HACK GARDEN HORIZONS HUB", Callback = function()
 
 -- --- TAB 3: FIX LAG ---
 Tabs.Main3:AddButton({ Title = "Fix Lag (TurboLite)", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/TurboLite/Script/main/FixLag.lua"))() end })
+
+-- --- TAB 4: TUYÊN BELLL ---
+Tabs.Main3:AddButton({ Title = "SPEED HUB VỘI", Callback = function() loadstring(game:HttpGet("loadstring(game:HttpGet("https://raw.githubusercontent.com/gumanba/Scripts/main/PlantsVsBrainrots"))() end })
 
 -- --- TAB SETTINGS (ĐÃ PHỤC HỒI ĐẦY ĐỦ) ---
 Tabs.Settings:AddDropdown("InterfaceTheme", {
